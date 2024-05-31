@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
@@ -153,7 +154,6 @@ class TestCheckRemoveSSMPolicy(unittest.TestCase):
         # Invoke the function to check and remove SSM policy
         result = check_remove_ssm_policy(REGION)
 
-        # Assertions to verify the function's behavior
         assert "Success" == result['status']
         assert "No instances with SSM policy" in result['reason']
 

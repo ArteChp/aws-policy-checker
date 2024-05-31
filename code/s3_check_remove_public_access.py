@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 from code.helpers import initialize_s3_client, get_bucket_policy, delete_bucket_policy, handle_error, handle_success
@@ -17,6 +16,7 @@ def check_remove_public_access(bucket_name, region = "us-east-1"):
     try:
         bucket_policy = get_bucket_policy(s3_client, bucket_name)
         if bucket_policy:
+            # Remove bucket policy
             delete_bucket_policy(s3_client, bucket_name)
             return handle_success(f"Bucket {bucket_name} has a bucket policy. Removed a policy.")
     except ClientError as e:

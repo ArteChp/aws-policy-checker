@@ -12,12 +12,17 @@ def check_remove_public_access(region = "us-east-1"):
         PartialCredentialsError: If incomplete AWS credentials are provided.
     """
     try:
+        # Initialize RDS client
         rds_client = initialize_rds_client(region)
+
+        # Describe RDS instances
         response = describe_db_instances(rds_client)
 
         for instance in response['DBInstances']:
+            # Check if RDS instance has public access
             if check_public_access(instance):
                 instance_id = instance['DBInstanceIdentifier']
+                # Modify RDS instance to disable public access
                 modify_db_instance(rds_client, instance_id)
                 return handle_success(f"Disabled public access for RDS instance: {instance_id}") 
             else:

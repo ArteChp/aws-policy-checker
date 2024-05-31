@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 from moto import mock_aws
 import boto3
