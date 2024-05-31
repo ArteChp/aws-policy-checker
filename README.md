@@ -59,10 +59,10 @@ AWS_Policy_Checker/
 └── requirements.txt
 ```
 
-**code/**: Contains Python scripts for interacting with AWS services.
-**tests/**: Holds unit test scripts for each code module to ensure functionality.
-**README.md**: Documentation providing an overview of the project, script descriptions, usage instructions, and project structure.
-**requirements.txt**: Lists the dependencies required to run the scripts.
-**setup.py**: Python script used for packaging the project. It contains metadata such as project name, version, dependencies, and entry points for scripts and modules. 
-**Makefile**: Makefile provides shortcuts for common development tasks.
+- **code/**: Contains Python scripts for interacting with AWS services.
+- **tests/**: Holds unit test scripts for each code module to ensure functionality.
+- **README.md**: Documentation providing an overview of the project, script descriptions, usage instructions, and project structure.
+- **requirements.txt**: Lists the dependencies required to run the scripts.
+- **setup.py**: Python script used for packaging the project. It contains metadata such as project name, version, dependencies, and entry points for scripts and modules. 
+- **Makefile**: Makefile provides shortcuts for common development tasks.
 
