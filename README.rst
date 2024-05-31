@@ -1,7 +1,7 @@
-AWS Policy Checker
-===================
+# AWS Policy Checker
 
 ## Introduction
+
 This project comprises Python scripts utilizing the boto3 library to interact with AWS services. Each script is accompanied by unit tests to ensure its functionality. The aim of this project is to show knowledge in Python, AWS, and boto3 by implementing solutions to various scenarios such as checking for public access in S3 buckets, RDS instances, and managing SSM policies on EC2 instances.
 
 ## Description and Usage Information
