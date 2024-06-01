@@ -16,6 +16,7 @@ setup(
     author='Arte Chp',
     author_email='art.cha@tutanota.com',
     url='https://github.com/ArteChp/aws_policy_checker',
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs')),
+    python_requires='>=3.6'
 )
 
