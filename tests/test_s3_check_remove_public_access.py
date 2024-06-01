@@ -1,19 +1,41 @@
 # -*- coding: utf-8 -*-
 import unittest
+import logging
 import json
-import boto3
+from unittest.mock import patch
 from moto import mock_aws
+import boto3
 from code.s3_check_remove_public_access import check_remove_public_access
+
+# Set up logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Constants for test setup
 BUCKET_NAME = 's3-test-bucket'
 REGION = 'us-west-2'
 
 class TestCheckRemovePublicAccess(unittest.TestCase):
-    
-    # Test method to check and remove public access policy from S3 bucket
-    @mock_aws
-    def test_check_remove_public_access_with_policy(self):
+    """Unit tests for the check_remove_public_access function."""
+
+    def setUp(self) -> None:
+        """Set up the mock S3 environment."""
+        self.mock_s3 = mock_aws()
+        self.mock_s3.start()
+        self.s3 = boto3.client('s3', region_name=REGION)
+        self.s3.create_bucket(
+            Bucket=BUCKET_NAME,
+            CreateBucketConfiguration={'LocationConstraint': REGION}
+        )
+
+    def tearDown(self) -> None:
+        """Clean up the mock S3 environment."""
+        self.mock_s3.stop()
+
+    @patch('code.s3_check_remove_public_access.initialize_s3_client')
+    def test_check_remove_public_access_with_policy(self, mock_initialize_s3_client) -> None:
+        """Test removing a public access policy from an S3 bucket."""
+        mock_initialize_s3_client.return_value = self.s3
 
         bucket_policy = {
             'Version': '2012-10-17',
@@ -24,44 +46,33 @@ class TestCheckRemovePublicAccess(unittest.TestCase):
                 'Resource': f'arn:aws:s3:::{BUCKET_NAME}/*'
             }]
         }
+        bucket_policy_json = json.dumps(bucket_policy)
 
-        # Convert the policy from JSON dict to string
-        bucket_policy = json.dumps(bucket_policy)
-
-        s3 = boto3.client('s3', region_name=REGION)
-
-        # Create S3 bucket and attach policy for public access
-        s3.create_bucket(
-            Bucket=BUCKET_NAME,
-            CreateBucketConfiguration={'LocationConstraint': REGION}
-        )
-        s3.put_bucket_policy(Bucket=BUCKET_NAME, Policy=bucket_policy)
+        # Attach policy for public access
+        self.s3.put_bucket_policy(Bucket=BUCKET_NAME, Policy=bucket_policy_json)
 
         # Invoke the function to check and remove public access
-        result = check_remove_public_access(s3, BUCKET_NAME)
-        
+        logger.info("Running test_check_remove_public_access_with_policy...")
+        result = check_remove_public_access(self.s3, BUCKET_NAME)
+
         # Assertions to verify the function's behavior
-        assert "Success" == result['status']
-        assert "Removed a policy" in result['reason']
+        self.assertEqual(result['status'], "Success")
+        self.assertIn("Removed a policy", result['reason'])
 
-    # Test method for scenario with no public access policy on S3 bucket
-    @mock_aws
-    def test_check_remove_no_public_access_with_policy(self):
+    @patch('code.s3_check_remove_public_access.initialize_s3_client')
+    def test_check_remove_no_public_access_with_policy(self, mock_initialize_s3_client) -> None:
+        """Test checking an S3 bucket with no public access policy."""
+        mock_initialize_s3_client.return_value = self.s3
 
-        s3 = boto3.client('s3', region_name=REGION)
-
-        # Create S3 bucket without public access
-        s3.create_bucket(
-            Bucket=BUCKET_NAME,
-            CreateBucketConfiguration={'LocationConstraint': REGION}
-        )
         # Invoke the function to check and confirm no public access policy
-        result = check_remove_public_access(s3, BUCKET_NAME)
-        
+        logger.info("Running test_check_remove_no_public_access_with_policy...")
+        result = check_remove_public_access(self.s3, BUCKET_NAME)
+
         # Assertions to verify the function's behavior
-        assert "Success" == result['status']
-        assert "No bucket policy found" in result['reason']
+        self.assertEqual(result['status'], "Success")
+        self.assertIn("No bucket policy found", result['reason'])
 
 # Entry point for the test script
 if __name__ == '__main__':
-    unittest.main()
+    result = unittest.main()
+    logger.info(result)
