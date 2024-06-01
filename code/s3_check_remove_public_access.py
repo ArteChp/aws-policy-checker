@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
-from code.helpers import initialize_s3_client, get_bucket_policy, delete_bucket_policy, handle_error, handle_success
+from .helpers import initialize_s3_client, get_bucket_policy, delete_bucket_policy, handle_error, handle_success
 
-def check_remove_public_access(bucket_name, region = "us-east-1"):
+def check_remove_public_access(bucket_name: str, region: str = "us-east-1") -> str:
     """
     Check if an S3 bucket has public access, and if so, remove it.
 
@@ -23,20 +23,19 @@ def check_remove_public_access(bucket_name, region = "us-east-1"):
         if e.response['Error']['Code'] == 'NoSuchBucketPolicy':
             return handle_success(f"No bucket policy found for {bucket_name}") 
         else:
-            print(f"Error checking bucket policy: {e}")
             return handle_error(f"Error checking bucket policy: {e}") 
 
 
-def main():
+def main(region: str = "us-east-1") -> None:
     """
     Main function to check all S3 buckets and remove public access if found.
     """
     s3_client = initialize_s3_client(region)
     try:
-        response = s3.list_buckets()
+        response = s3_client.list_buckets()
         buckets = response.get('Buckets', [])
         for bucket in buckets:
-            check_and_remove_public_access(bucket['Name'])
+            check_remove_public_access(bucket['Name'])
     except NoCredentialsError:
         return handle_error("Credentials not available.") 
 
