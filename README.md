@@ -13,7 +13,7 @@ Description: This script checks if S3 buckets have public access. If public acce
 Usage:
 
 ```
-python3 ./code/s3_check_remove_public_access.py
+python3 -m code.s3_check_remove_public_access
 ```
 
 ### Script 2: RDS Check Remove Public Access
@@ -23,7 +23,7 @@ Description: This script checks if RDS instances have public access. If public a
 Usage:
 
 ```
-python3  ./code/rds_check_remove_public_access.py
+python3 -m code.rds_check_remove_public_access
 ```
 
 ### Script 3: EC2 Check Remove SSM Policy
@@ -32,7 +32,7 @@ Description: This script checks if EC2 instances have the SSM policy attached to
 Usage:
 
 ```
-python3 ./code/ec2_check_remove_ssm_policy.py
+python3 -m code.ec2_check_remove_ssm_policy
 ```
 
 ## Project Structure
