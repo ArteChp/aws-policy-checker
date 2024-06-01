@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+import logging
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from .helpers import initialize_rds_client, describe_db_instances, check_public_access, modify_db_instance, handle_error, handle_success
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def check_remove_public_access(region: str = "us-east-1") -> str:
     """
@@ -41,4 +46,5 @@ def check_remove_public_access(region: str = "us-east-1") -> str:
         return handle_error(e, "Unexpected error: ")
 
 if __name__ == '__main__':
-    check_remove_public_access()
+    result = check_remove_public_access()
+    logger.info(result)

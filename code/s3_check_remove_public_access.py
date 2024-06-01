@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+import logging
 import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 from .helpers import initialize_s3_client, get_bucket_policy, delete_bucket_policy, handle_error, handle_success
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def check_remove_public_access(s3_client: boto3.client, bucket_name: str) -> str:
     """
@@ -46,4 +51,5 @@ def main(region: str = "us-east-1") -> None:
 
 
 if __name__ == '__main__':
-    main()
+    result = main()
+    logger.info(result)

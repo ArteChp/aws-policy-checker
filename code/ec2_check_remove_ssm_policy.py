@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
+from typing import Tuple
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from .helpers import initialize_clients, describe_instances, get_instance_profile, list_attached_policies, detach_policy,handle_error, handle_success
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def check_remove_ssm_policy(region: str = "us-east-1") -> str:
     """
@@ -62,4 +67,5 @@ def process_instance(iam_client, instance: dict) -> int:
     return ssm_detached_count
 
 if __name__ == '__main__':
-    check_remove_ssm_policy()
+    result = check_remove_ssm_policy()
+    logger.info(result)
