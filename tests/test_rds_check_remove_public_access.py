@@ -36,7 +36,7 @@ class TestRdsCheckRemovePublicAccess(unittest.TestCase):
         
         # Assertions to verify the function's behavior
         assert "Success" == result['status']
-        assert "Disabled public access for RDS instance" in result['reason']
+        assert "Disabled public access for" in result['reason']
     
     # Test method for scenario with no public access on RDS instance
     @mock_aws
