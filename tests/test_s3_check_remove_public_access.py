@@ -2,6 +2,7 @@
 import unittest
 import logging
 import json
+from typing import Dict, Any
 from unittest.mock import patch
 from moto import mock_aws
 import boto3
@@ -12,8 +13,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Constants for test setup
-BUCKET_NAME = 's3-test-bucket'
-REGION = 'us-west-2'
+BUCKET_NAME: str = 's3-test-bucket'
+REGION: str = 'us-west-2'
 
 class TestCheckRemovePublicAccess(unittest.TestCase):
     """Unit tests for the check_remove_public_access function."""
