@@ -38,11 +38,11 @@ class TestCheckRemovePublicAccess(unittest.TestCase):
         s3.put_bucket_policy(Bucket=BUCKET_NAME, Policy=bucket_policy)
 
         # Invoke the function to check and remove public access
-        status_policy = check_remove_public_access(BUCKET_NAME, REGION)
+        result = check_remove_public_access(s3, BUCKET_NAME)
         
         # Assertions to verify the function's behavior
-        assert "Success" == status_policy['status']
-        assert "Removed a policy" in status_policy['reason']
+        assert "Success" == result['status']
+        assert "Removed a policy" in result['reason']
 
     # Test method for scenario with no public access policy on S3 bucket
     @mock_aws
@@ -56,11 +56,11 @@ class TestCheckRemovePublicAccess(unittest.TestCase):
             CreateBucketConfiguration={'LocationConstraint': REGION}
         )
         # Invoke the function to check and confirm no public access policy
-        status_policy = check_remove_public_access(BUCKET_NAME, REGION)
+        result = check_remove_public_access(s3, BUCKET_NAME)
         
         # Assertions to verify the function's behavior
-        assert "Success" == status_policy['status']
-        assert "No bucket policy found" in status_policy['reason']
+        assert "Success" == result['status']
+        assert "No bucket policy found" in result['reason']
 
 # Entry point for the test script
 if __name__ == '__main__':
