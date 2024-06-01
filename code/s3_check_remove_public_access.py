@@ -36,7 +36,9 @@ def main(region: str = "us-east-1") -> None:
         for bucket in buckets:
             check_remove_public_access(s3_client, bucket['Name'])
     except NoCredentialsError:
-        return handle_error("Credentials not available.") 
+        handle_error("Credentials not available.") 
+    except ClientError as e:
+        handle_error(f"Error listing buckets: {e}")
 
 
 if __name__ == '__main__':
