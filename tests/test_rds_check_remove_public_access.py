@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 import unittest
 from moto import mock_aws
+import logging
 import boto3
 from botocore.exceptions import ClientError
 from code.rds_check_remove_public_access import check_remove_public_access
+
+# Set up logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Constants for test setup
 REGION = 'us-west-2'
@@ -13,15 +18,27 @@ DB_ENGINE = 'mysql'
 DB_USER = 'admin'
 DB_PASS = 'password'
 
+
 class TestRdsCheckRemovePublicAccess(unittest.TestCase):
 
-    # Test method to check and remove public access from an RDS instance
+    def setUp(self):
+        """Set up the mock RDS environment."""
+        logger.info("Setting up the mock RDS environment")
+        self.mock_rds = mock_aws()
+        self.mock_rds.start()
+        self.rds = boto3.client('rds', region_name=REGION)
+
+    def tearDown(self):
+        """Clean up the mock RDS environment."""
+        self.mock_rds.stop()
+
     @mock_aws
-    def test_check_remove_public_access(self):
-        rds = boto3.client('rds', region_name=REGION)
-        
+    def test_remove_public_access_success(self):
+        """Test removing public access from an RDS instance."""
+        logger.info("Running test_remove_public_access_success")
+
         # Create a mock RDS instance with public access
-        rds.create_db_instance(
+        self.rds.create_db_instance(
             DBInstanceIdentifier=DB_NAME,
             AllocatedStorage=20,
             DBInstanceClass=DB_INSTANCE,
@@ -35,16 +52,16 @@ class TestRdsCheckRemovePublicAccess(unittest.TestCase):
         result = check_remove_public_access(REGION)
         
         # Assertions to verify the function's behavior
-        assert "Success" == result['status']
-        assert "Disabled public access for" in result['reason']
-    
-    # Test method for scenario with no public access on RDS instance
+        self.assertEqual(result['status'], "Success")
+        self.assertIn("Disabled public access for", result['reason'])
+
     @mock_aws
-    def test_check_remove_no_public_access(self):
-        rds = boto3.client('rds', region_name=REGION)
-        
+    def test_no_public_access(self):
+        """Test checking an RDS instance with no public access."""
+        logger.info("Running test_no_public_access")
+
         # Create a mock RDS instance without public access
-        rds.create_db_instance(
+        self.rds.create_db_instance(
             DBInstanceIdentifier=DB_NAME,
             AllocatedStorage=20,
             DBInstanceClass=DB_INSTANCE,
@@ -58,9 +75,10 @@ class TestRdsCheckRemovePublicAccess(unittest.TestCase):
         result = check_remove_public_access(REGION)
         
         # Assertions to verify the function's behavior
-        assert "Success" == result['status']
-        assert "No public access for RDS instance" in result['reason']
+        self.assertEqual(result['status'], "Success")
+        self.assertIn("No public access for RDS instance", result['reason'])
 
 # Entry point for the test script
 if __name__ == '__main__':
-    unittest.main()
+    result = unittest.main()
+    logger.info(result)
