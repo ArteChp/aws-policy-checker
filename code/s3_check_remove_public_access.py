@@ -7,7 +7,9 @@ def check_remove_public_access(s3_client: boto3.client, bucket_name: str) -> str
     """
     Check if an S3 bucket has public access, and if so, remove it.
 
+    :param s3_client: Initialized S3 client
     :param bucket_name: Name of the S3 bucket
+    :return: Result message
     """
 
     # Check bucket policy
@@ -27,6 +29,8 @@ def check_remove_public_access(s3_client: boto3.client, bucket_name: str) -> str
 def main(region: str = "us-east-1") -> None:
     """
     Main function to check all S3 buckets and remove public access if found.
+
+    :param region: AWS region to initialize the S3 client
     """
     s3_client = initialize_s3_client(region)
 
